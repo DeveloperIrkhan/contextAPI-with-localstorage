@@ -5,28 +5,32 @@ import TodoForm from './Components/TodoForm';
 import TodoItems from './Components/TodoItems';
 
 function App() {
-  const [todos, setTodots] = useState([]);
+  const [todos, setTodos] = useState([]);
   //now we will add todos to array but will add at the start of the array
   const addTodo = (todo) => {
-    setTodots((prevtodos) => [{ id: Date.now(), ...todo }, prevtodos])
+    setTodos((prev) => [{ id: Date.now(), ...todo }, ...prev])
   }
   const deleteTodo = (id) => {
-    setTodots((prevTodo) => prevTodo.filter((todo) => todo.id != id))
+    setTodos((oldTodo) => oldTodo.filter((todo) => todo.id !== id))
   }
   const toggleComplete = (id) => {
-    setTodots((prev) => prev.map((prevTodo) => prevTodo === id ?
-      { ...prevTodo, toggleComplete: !prevTodo.toggleComplete } : prevTodo))
-  }
+    setTodos((prev) => prev.map((oldTodo) => oldTodo.id === id ?
+      { ...oldTodo, completed: !oldTodo.completed } : oldTodo))
+  } 
 
   const updateTodo = (id, todo) => {
-    setTodots((prevtodos) => prevtodos.map((prevTodo) => (
-      prevtodos.id === id ? todo : prevtodos
+    setTodos((prev) => prev.map((oldTodo) => (
+      oldTodo.id === id ? todo : oldTodo
     )))
+    // setTodos((prev) => prev.map((oldTodo) => {
+    //   if(oldTodo.id===id) todo
+    //   else oldTodo
+    // }))
   }
   useEffect(() => {
     const todos = JSON.parse(localStorage.getItem("todos"))
     if (todos && todos.length > 0) {
-      setTodots(todos)
+      setTodos(todos)
     }
   }, []);
   useEffect(() => {
@@ -46,7 +50,7 @@ function App() {
             {/*Loop and Add TodoItem here */}
             {todos.map((todo) => (
               <div key={todo.id} className="w-full">
-                <TodoItems todo={todos} />
+                <TodoItems todo={todo} />
               </div>
             ))}
           </div>
